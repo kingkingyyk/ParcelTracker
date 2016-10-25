@@ -1,15 +1,14 @@
 package dexi;
 
 import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+
+import dexi.InfoFetcher.NoTrackingException;
 
 public class dexi {
 	
@@ -17,43 +16,8 @@ public class dexi {
 	public static String TrackingNumber="";
 	public static boolean NotifyFlag=false;
 	public static long FetchCount=0;
-	
-	private static String fetchInfo () {
-		FetchCount++;
-		try {
-			URL url=new URL("http://118.139.183.89/Podtrack/Details.aspx?ID="+TrackingNumber);
-			InputStream is=url.openStream();
-			BufferedReader br=new BufferedReader(new InputStreamReader(is));
-			String s;
-			ArrayList<String> lines=new ArrayList<>();
-			while ((s=br.readLine())!=null) {
-				lines.add(s);
-			}
-			int startIndex=-1;
-			for (int i=0;i<lines.size() && startIndex==-1;i++) {
-				if (lines.get(i).contains("<span id=\"GridView1_Label1_0\">")) {
-					startIndex=i-1;
-				}
-			}
-			StringBuilder sb=new StringBuilder();
-			if (startIndex==-1) {
-				sb.append("NO INFORMATION FOUND! PLEASE CHECK YOUR TRACKING NUMBER.");
-			} else {
-				sb.append("<table><tr>");
-	
-				for (;!lines.get(startIndex).contains("</table>");startIndex++) {
-					sb.append(lines.get(startIndex));
-				}
-				sb.append("</table>");
-			}
-			br.close();
-			is.close();
-			return sb.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-		};
-		return "CONNECTION FAILED!";
-	}
+	public static ArrayList<TrackingData> infoList=new ArrayList<>();
+	public static enum SourcePriority{DEXI,ABX};
 	
 	private static void setupGUI() {
 		try {
@@ -63,28 +27,77 @@ public class dexi {
 		System.setProperty("swing.aatext", "true");
 	}
 	
+	private static char [] timeUnitName={'h','m','s'};
+	private static int [] timeUnit={24*60,60,1};
+	
+	private static String secondToStr (int second) {
+		StringBuilder sb=new StringBuilder();
+		for (int i=0;i<timeUnit.length;i++) {
+			if (second/timeUnit[i]>0) {
+				sb.append(second/timeUnit[i]);
+				sb.append(timeUnitName[i]);
+				sb.append(' ');
+				second%=timeUnit[i];
+			}
+		}
+		return sb.toString();
+	}
+	
 	public static void main (String [] args) throws Exception {
 		setupGUI();
 		new inputTrackingNo();
 		ui window=new ui();
+		window.setLocationRelativeTo(null);
 		Thread t=new Thread() {
 			public void run () {
+				int lastSize=0;
 				while (true) {
 					window.setTitle("UPDATE @ "+formatter.format(new Date()));
-					String s="<html>"+fetchInfo()+"</html>";
-					if (!window.lblInfo.getText().equals(s) && !s.equals("<html>CONNECTION FAILED!</html>")) {
-						window.lblInfo.setText(s);
-						window.pack();
-						if (FetchCount>1) {
-							Toolkit.getDefaultToolkit().beep();
-							JOptionPane.showMessageDialog(null, "New Status!","Tracking",JOptionPane.INFORMATION_MESSAGE);
-						} else {
-							window.setLocationRelativeTo(null);
-						}
-					}
+					
+					String status="<html>";
 					try {
-						Thread.sleep(300*1000);
-					} catch (InterruptedException e) {}
+						InfoFetcher.fetchDexiInfo(TrackingNumber);
+						status+="DEX-I - OK";
+					} catch (NoTrackingException e) { status+="DEX-I - No Record";
+					} catch (Exception e) { status+="DEX-I - ERROR";}
+					
+					status+=" | ";
+					try {
+						InfoFetcher.fetchABXInfo(TrackingNumber);
+						status+="ABX - OK";
+					} catch (NoTrackingException e) { status+="ABX - No Record";
+					} catch (Exception e) { status+="ABX - ERROR"; }
+					status+="<br>Next update in ";
+					
+					if (infoList.size()>lastSize) {
+						Collections.sort(infoList);
+						lastSize=infoList.size();
+						
+						TrackingData latest=infoList.get(0);
+						Toolkit.getDefaultToolkit().beep();
+						JOptionPane.showMessageDialog(null, "New Update from "+latest.source+" at "+latest.location+"!\nStatus : "+latest.status,"Tracking",JOptionPane.INFORMATION_MESSAGE);
+						
+						StringBuilder sb=new StringBuilder();
+						sb.append("<html><table border=\"1\">");
+
+						for (TrackingData td : infoList) {
+							sb.append(td.toHTML());
+						}
+						sb.append("</table></html>");
+						window.lblInfo.setText(sb.toString());
+						window.lblStatus.setText(status+"</html>");
+						
+						try { Thread.sleep(500); } catch (InterruptedException e) {}
+						window.pack();
+					} else if (infoList.size()==0) {
+						window.lblInfo.setText(":( No record found");
+					}
+					
+					for (int i=300;i>=0;i--) {
+						window.lblStatus.setText(status+secondToStr(i)+"...</html>");
+						window.pack();
+						try { Thread.sleep(1000); } catch (InterruptedException e) {}
+					}
 				}
 			}
 		};
