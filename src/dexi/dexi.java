@@ -59,7 +59,7 @@ public class dexi {
 						InfoFetcher.fetchDexiInfo(TrackingNumber);
 						status+="DEX-I - OK";
 					} catch (NoTrackingException e) { status+="DEX-I - No Record";
-					} catch (Exception e) { status+="DEX-I - ERROR";}
+					} catch (Exception e) { status+="DEX-I - ERROR"; e.printStackTrace();}
 					
 					status+=" | ";
 					try {

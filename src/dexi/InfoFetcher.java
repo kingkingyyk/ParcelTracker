@@ -44,7 +44,7 @@ public class InfoFetcher {
 		is.close();
 		if (lines.size()>=4 && !lines.get(3).contains("No tracking information exists")) {
 			int currIndex=10;
-			while (currIndex<lines.size() && !lines.get(currIndex).equals("Back")) {
+			while (currIndex<lines.size() && !lines.get(currIndex).contains("For Delivery") && !lines.get(currIndex).equals("Back")) {
 				TrackingData td=new TrackingData();
 				td.eventTime=LocalDateTime.parse(lines.get(currIndex)+" "+lines.get(currIndex+1),DEXIFormatter);
 				td.location=lines.get(currIndex+2);
