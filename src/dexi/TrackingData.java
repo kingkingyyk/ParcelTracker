@@ -16,6 +16,7 @@ public class TrackingData implements Comparable<TrackingData> {
 	
 	@Override
 	public boolean equals (Object td) {
+		if (td==null) return false;
 		return compareTo((TrackingData)td)==0;
 	}
 	

@@ -2,9 +2,9 @@ package dexi;
 
 import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -16,7 +16,7 @@ public class dexi {
 	public static String TrackingNumber="";
 	public static boolean NotifyFlag=false;
 	public static long FetchCount=0;
-	public static ArrayList<TrackingData> infoList=new ArrayList<>();
+	public static LinkedList<TrackingData> infoList=new LinkedList<>();
 	public static enum SourcePriority{DEXI,ABX};
 	
 	private static void setupGUI() {
@@ -50,7 +50,7 @@ public class dexi {
 		window.setLocationRelativeTo(null);
 		Thread t=new Thread() {
 			public void run () {
-				int lastSize=0;
+				int lastSize=0; TrackingData latestTD=null;
 				while (true) {
 					window.setTitle("UPDATE @ "+formatter.format(new Date()));
 					
@@ -69,8 +69,9 @@ public class dexi {
 					} catch (Exception e) { status+="ABX - ERROR"; }
 					status+="<br>Next update in ";
 					
-					if (infoList.size()>lastSize) {
+					if (infoList.size()>lastSize && !infoList.getFirst().equals(latestTD)) {
 						Collections.sort(infoList);
+						latestTD=infoList.getFirst();
 						lastSize=infoList.size();
 						
 						TrackingData latest=infoList.get(0);
