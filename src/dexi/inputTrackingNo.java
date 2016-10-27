@@ -16,7 +16,7 @@ public class inputTrackingNo extends JDialog {
 
 	public inputTrackingNo() {
 		setModal(true);
-		setTitle("DEX-I Tracking");
+		setTitle("DEX-I & ABX Tracking");
 		setResizable(false);
 		setBounds(100, 100, 450, 127);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

@@ -26,4 +26,8 @@ public class TrackingData implements Comparable<TrackingData> {
 		else if (!source.equals(td.source)) return -dexi.SourcePriority.valueOf(source).ordinal()-dexi.SourcePriority.valueOf(td.source).ordinal();
 		return 0;
 	}
+	
+	public String [] toStringAry() {
+		return new String [] {DateFormatter.format(eventTime),location,status,source};
+	}
 }

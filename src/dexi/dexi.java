@@ -2,6 +2,7 @@ package dexi;
 
 import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -27,34 +28,18 @@ public class dexi {
 		System.setProperty("swing.aatext", "true");
 	}
 	
-	private static char [] timeUnitName={'h','m','s'};
-	private static int [] timeUnit={24*60,60,1};
-	
-	private static String secondToStr (int second) {
-		StringBuilder sb=new StringBuilder();
-		for (int i=0;i<timeUnit.length;i++) {
-			if (second/timeUnit[i]>0) {
-				sb.append(second/timeUnit[i]);
-				sb.append(timeUnitName[i]);
-				sb.append(' ');
-				second%=timeUnit[i];
-			}
-		}
-		return sb.toString();
-	}
-	
 	public static void main (String [] args) throws Exception {
 		setupGUI();
 		new inputTrackingNo();
-		ui window=new ui();
-		window.setLocationRelativeTo(null);
+		ui2.main(null);
 		Thread t=new Thread() {
 			public void run () {
 				int lastSize=0; TrackingData latestTD=null;
 				while (true) {
-					window.setTitle("UPDATE @ "+formatter.format(new Date()));
+					ui2.setTitle("DEX-I & ABX Tracking - UPDATE @ "+formatter.format(new Date()));
+					ui2.updateStatus("Updating...");
 					
-					String status="<html>";
+					String status="";
 					try {
 						InfoFetcher.fetchDexiInfo(TrackingNumber);
 						status+="DEX-I - OK";
@@ -67,7 +52,7 @@ public class dexi {
 						status+="ABX - OK";
 					} catch (NoTrackingException e) { status+="ABX - No Record";
 					} catch (Exception e) { status+="ABX - ERROR"; }
-					status+="<br>Next update in ";
+					ui2.updateStatus(status);
 					
 					if (infoList.size()>lastSize && !infoList.getFirst().equals(latestTD)) {
 						Collections.sort(infoList);
@@ -77,32 +62,24 @@ public class dexi {
 						TrackingData latest=infoList.get(0);
 						Toolkit.getDefaultToolkit().beep();
 						JOptionPane.showMessageDialog(null, "New Update from "+latest.source+" at "+latest.location+"!\nStatus : "+latest.status,"Tracking",JOptionPane.INFORMATION_MESSAGE);
-						
-						StringBuilder sb=new StringBuilder();
-						sb.append("<html><table border=\"1\">");
 
-						for (TrackingData td : infoList) {
-							sb.append(td.toHTML());
-						}
-						sb.append("</table></html>");
-						window.lblInfo.setText(sb.toString());
-						window.lblStatus.setText(status+"</html>");
-						
+						ui2.updateTable();
 						try { Thread.sleep(500); } catch (InterruptedException e) {}
-						window.pack();
 					} else if (infoList.size()==0) {
-						window.lblInfo.setText(":( No record found");
+						ui2.updateStatus(":( No record found");
 					}
 					
-					for (int i=300;i>=0;i--) {
-						window.lblStatus.setText(status+secondToStr(i)+"...</html>");
-						window.pack();
+					int max=0;
+					LocalDateTime dt=LocalDateTime.now();
+					if (dt.getHour()>=7 && dt.getHour()<=19) max=5*60;
+					else max=10*60;
+					for (int i=1;i<=max;i++) {
+						ui2.updateProgBar(i,max);
 						try { Thread.sleep(1000); } catch (InterruptedException e) {}
 					}
 				}
 			}
 		};
 		t.start();
-		window.setVisible(true);
 	}
 }
