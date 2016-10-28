@@ -24,6 +24,7 @@ public class ui2 extends Shell {
 	public static Table table;
 	public static Label lblStatus;
 	public static ProgressBar progressBar;
+	public static boolean resizeFlag=true;
 
 	/**
 	 * Launch the application.
@@ -76,12 +77,12 @@ public class ui2 extends Shell {
 		lblStatus.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		lblStatus.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		lblStatus.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
-		lblStatus.setBounds(10, 16, 219, 15);
+		lblStatus.setBounds(10, 16, 382, 15);
 		
-		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setBounds(0, 41, 544, 290);
+		table = new Table(this, SWT.FULL_SELECTION | SWT.MULTI);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		table.setBounds(0, 41, 544, 290);
 		
 		TableColumn tblclmnTime = new TableColumn(table, SWT.NONE);
 		tblclmnTime.setWidth(104);
@@ -109,6 +110,7 @@ public class ui2 extends Shell {
 		});
 		btnCopy.setBounds(398, 10, 136, 25);
 		btnCopy.setText("Copy Tracking No.");
+		
 		createContents();
 	}
 
@@ -129,14 +131,6 @@ public class ui2 extends Shell {
 		});
 	}
 	
-	public static void setTitle (String s) {
-		Display.getDefault().syncExec(new Runnable() {
-			public void run () {
-				Display.getCurrent().getActiveShell().setText(s);
-			}
-		});
-	}
-	
 	public static void updateProgBar (int curr, int max) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run () {
@@ -149,7 +143,7 @@ public class ui2 extends Shell {
 	public static  void updateTable() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run () {
-				table.clearAll();
+				table.removeAll();
 				for (TrackingData td : dexi.infoList) {
 					TableItem item=new TableItem(table,SWT.NONE);
 					item.setText(td.toStringAry());

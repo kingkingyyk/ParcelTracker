@@ -36,10 +36,9 @@ public class dexi {
 			public void run () {
 				int lastSize=0; TrackingData latestTD=null;
 				while (true) {
-					ui2.setTitle("DEX-I & ABX Tracking - UPDATE @ "+formatter.format(new Date()));
-					ui2.updateStatus("Updating...");
+					ui2.updateStatus(formatter.format(new Date())+" | Updating...");
 					
-					String status="";
+					String status=formatter.format(new Date())+" | ";
 					try {
 						InfoFetcher.fetchDexiInfo(TrackingNumber);
 						status+="DEX-I - OK";
@@ -54,15 +53,18 @@ public class dexi {
 					} catch (Exception e) { status+="ABX - ERROR"; }
 					ui2.updateStatus(status);
 					
-					if (infoList.size()>lastSize && !infoList.getFirst().equals(latestTD)) {
+					if (infoList.size()>lastSize) {
 						Collections.sort(infoList);
-						latestTD=infoList.getFirst();
-						lastSize=infoList.size();
 						
-						TrackingData latest=infoList.get(0);
-						Toolkit.getDefaultToolkit().beep();
-						JOptionPane.showMessageDialog(null, "New Update from "+latest.source+" at "+latest.location+"!\nStatus : "+latest.status,"Tracking",JOptionPane.INFORMATION_MESSAGE);
-
+						if (!infoList.getFirst().equals(latestTD)) {
+							latestTD=infoList.getFirst();
+							lastSize=infoList.size();
+							
+							TrackingData latest=infoList.get(0);
+							Toolkit.getDefaultToolkit().beep();
+							JOptionPane.showMessageDialog(null, "New Update from "+latest.source+" at "+latest.location+"!\nStatus : "+latest.status,"Tracking",JOptionPane.INFORMATION_MESSAGE);
+						}
+						
 						ui2.updateTable();
 						try { Thread.sleep(500); } catch (InterruptedException e) {}
 					} else if (infoList.size()==0) {
