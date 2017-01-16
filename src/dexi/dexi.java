@@ -31,12 +31,21 @@ public class dexi {
 	public static void main (String [] args) throws Exception {
 		setupGUI();
 		new inputTrackingNo();
-		ui2.main(null);
+		if (dexi.TrackingNumber.equals("")) return;
+		Thread mainUIT=new Thread() {
+			public void run () {
+				MainUI.main(null);
+			}
+		};
+		mainUIT.start();
 		Thread t=new Thread() {
 			public void run () {
 				int lastSize=0; TrackingData latestTD=null;
+				while (MainUI.getCurrent()==null) {
+					try { Thread.sleep(100); } catch (InterruptedException e) {}
+				}
 				while (true) {
-					ui2.updateStatus(formatter.format(new Date())+" | Updating...");
+					MainUI.updateStatus(formatter.format(new Date())+" | Updating...");
 					
 					String status=formatter.format(new Date())+" | ";
 					try {
@@ -51,7 +60,7 @@ public class dexi {
 						status+="ABX - OK";
 					} catch (NoTrackingException e) { status+="ABX - No Record";
 					} catch (Exception e) { status+="ABX - ERROR"; }
-					ui2.updateStatus(status);
+					MainUI.updateStatus(status);
 					
 					if (infoList.size()>lastSize) {
 						Collections.sort(infoList);
@@ -62,13 +71,13 @@ public class dexi {
 							
 							TrackingData latest=infoList.get(0);
 							Toolkit.getDefaultToolkit().beep();
-							JOptionPane.showMessageDialog(null, "New Update from "+latest.source+" at "+latest.location+"!\nStatus : "+latest.status,"Tracking",JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, "New Update from "+latest.getSource()+" at "+latest.getLocation()+"!\nStatus : "+latest.getStatus(),"Tracking",JOptionPane.INFORMATION_MESSAGE);
 						}
 						
-						ui2.updateTable();
+						MainUI.updateTable();
 						try { Thread.sleep(500); } catch (InterruptedException e) {}
 					} else if (infoList.size()==0) {
-						ui2.updateStatus(":( No record found");
+						MainUI.updateStatus(":( No record found");
 					}
 					
 					int max=0;
@@ -76,7 +85,7 @@ public class dexi {
 					if (dt.getHour()>=7 && dt.getHour()<=19) max=5*60;
 					else max=10*60;
 					for (int i=1;i<=max;i++) {
-						ui2.updateProgBar(i,max);
+						MainUI.updateProgBar(i,max);
 						try { Thread.sleep(1000); } catch (InterruptedException e) {}
 					}
 				}

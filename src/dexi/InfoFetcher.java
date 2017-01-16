@@ -47,10 +47,10 @@ public class InfoFetcher {
 			if (lines.get(9).startsWith(": ")) currIndex+=4;
 			while (currIndex<lines.size() && !lines.get(currIndex).contains("For Delivery") && !lines.get(currIndex).equals("Back")) {
 				TrackingData td=new TrackingData();
-				td.eventTime=LocalDateTime.parse(lines.get(currIndex)+" "+lines.get(currIndex+1),DEXIFormatter);
-				td.location=lines.get(currIndex+2);
-				td.status=lines.get(currIndex+3);
-				td.source="DEXI";
+				td.setEventTime(LocalDateTime.parse(lines.get(currIndex)+" "+lines.get(currIndex+1),DEXIFormatter));
+				td.setLocation(lines.get(currIndex+2));
+				td.setStatus(lines.get(currIndex+3));
+				td.setSource("DEXI");
 				currIndex+=4;
 				
 				if (!dexi.infoList.contains(td)) dexi.infoList.add(td);
@@ -85,14 +85,15 @@ public class InfoFetcher {
 			}
 		}
 		br.close(); is.close();
+		for (int i=0;i<lines.size();i++) System.out.println(i+" "+lines.get(i));
 		if (lines.size()>=6 && !lines.get(5).equals("No records available")) {
-			int currIndex=12;
+			int currIndex=lines.indexOf("Activity")+1;
 			while (currIndex<lines.size() && lines.get(currIndex).charAt(0)!='*') {
 				TrackingData td=new TrackingData();
-				td.location=lines.get(currIndex);
-				td.eventTime=LocalDateTime.parse(lines.get(currIndex+1),ABXFormatter);
-				td.status=lines.get(currIndex+2);
-				td.source="ABX";
+				td.setLocation(lines.get(currIndex));
+				td.setEventTime(LocalDateTime.parse(lines.get(currIndex+1),ABXFormatter));
+				td.setStatus(lines.get(currIndex+2));
+				td.setSource("ABX");
 				currIndex+=3;
 				if (!dexi.infoList.contains(td)) dexi.infoList.add(td);
 			}

@@ -3,15 +3,38 @@ package dexi;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 public class TrackingData implements Comparable<TrackingData> {
-	private static DateTimeFormatter DateFormatter=DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm");
-	public LocalDateTime eventTime;
-	public String location;
-	public String status;
-	public String source;
+	public static DateTimeFormatter DateFormatter=DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm");
+	private ObjectProperty<LocalDateTime> eventTime;
+	private SimpleStringProperty location;
+	private SimpleStringProperty status;
+	private SimpleStringProperty source;
+	
+	public TrackingData () {
+		eventTime=new SimpleObjectProperty<LocalDateTime>(LocalDateTime.now());
+		location=new SimpleStringProperty("Location");
+		status=new SimpleStringProperty("Status");
+		source=new SimpleStringProperty("Source");
+	}
+	
+	public LocalDateTime getEventTime () {return eventTime.get();}
+	public void setEventTime (LocalDateTime dt) {eventTime.set(dt);}
+	
+	public String getLocation () {return location.get();}
+	public void setLocation (String l) {location.set(l);}
+	
+	public String getStatus() {return status.get();}
+	public void setStatus (String s) {status.set(s);}
+	
+	public String getSource() {return source.get();}
+	public void setSource (String s) {source.set(s);}
 	
 	public String toHTML () {
-		return "<tr><td>"+DateFormatter.format(eventTime)+"</td><td>"+location+"</td><td>"+status+"</td><td>"+source+"</td>";
+		return "<tr><td>"+DateFormatter.format(getEventTime())+"</td><td>"+location+"</td><td>"+status+"</td><td>"+source+"</td>";
 	}
 	
 	@Override
@@ -22,12 +45,12 @@ public class TrackingData implements Comparable<TrackingData> {
 	
 	@Override
 	public int compareTo(TrackingData td) {
-		if (!eventTime.equals(td.eventTime)) return -eventTime.compareTo(td.eventTime);
-		else if (!source.equals(td.source)) return -dexi.SourcePriority.valueOf(source).ordinal()-dexi.SourcePriority.valueOf(td.source).ordinal();
+		if (!getEventTime().equals(td.getEventTime())) return -getEventTime().compareTo(td.getEventTime());
+		else if (!source.equals(td.source)) return -dexi.SourcePriority.valueOf(getSource()).ordinal()-dexi.SourcePriority.valueOf(td.getSource()).ordinal();
 		return 0;
 	}
 	
 	public String [] toStringAry() {
-		return new String [] {DateFormatter.format(eventTime),location,status,source};
+		return new String [] {DateFormatter.format(getEventTime()),getLocation(),getStatus(),getSource()};
 	}
 }
