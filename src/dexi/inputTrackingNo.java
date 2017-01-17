@@ -16,7 +16,7 @@ public class inputTrackingNo extends JDialog {
 
 	public inputTrackingNo() {
 		setModal(true);
-		setTitle("DEX-I & ABX Tracking");
+		setTitle(dexi.APP_NAME);
 		setResizable(false);
 		setBounds(100, 100, 450, 127);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -38,7 +38,7 @@ public class inputTrackingNo extends JDialog {
 					dexi.TrackingNumber=textField.getText();
 					dispose();
 				} else {
-					JOptionPane.showMessageDialog(null, "Please enter a tracking number!","DEX-I Tracking",JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Please enter a tracking number!",dexi.APP_NAME,JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});

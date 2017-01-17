@@ -85,7 +85,7 @@ public class InfoFetcher {
 			}
 		}
 		br.close(); is.close();
-		for (int i=0;i<lines.size();i++) System.out.println(i+" "+lines.get(i));
+
 		if (lines.size()>=6 && !lines.get(5).equals("No records available")) {
 			int currIndex=lines.indexOf("Activity")+1;
 			while (currIndex<lines.size() && lines.get(currIndex).charAt(0)!='*') {
@@ -100,4 +100,46 @@ public class InfoFetcher {
 		} else throw new NoTrackingException("");
 	}
 
+	private static DateTimeFormatter GDEXFormatter=DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+	
+	public static void fetchGDEXInfo (String number) throws NoTrackingException, Exception {
+		URL url=new URL("http://web2.gdexpress.com/official/iframe/etracking2.php");
+		HttpURLConnection.setFollowRedirects(true);
+		HttpURLConnection conn=(HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Referer","http://web2.gdexpress.com/official/iframe/etracking2.php");
+		conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36");
+		conn.setRequestProperty("Accept-Language","en-US, en;q=0.5");
+		conn.setDoOutput(true);
+		DataOutputStream wr=new DataOutputStream(conn.getOutputStream());
+		wr.writeBytes("capture="+number+"&redoc_gdex=cnGdex&Submit=Track");
+		wr.flush();
+		wr.close();
+		
+		InputStream is=conn.getInputStream();
+		BufferedReader br=new BufferedReader(new InputStreamReader(is));
+		String s;
+		String targetLine=null;
+		while ((s=br.readLine())!=null) {
+			if (s.contains("<td>"+number)) {
+				Document parsed=Jsoup.parse(s);
+				if (parsed.hasText() && hasWord(parsed.text())) {
+					targetLine=s;
+					break;
+				}
+			}
+		}
+		br.close(); is.close();
+		if (targetLine!=null) {
+			String [] data=targetLine.split("<td>");
+			for (int i=2;i<data.length;i+=4) {
+				TrackingData td=new TrackingData();
+				td.setEventTime(LocalDateTime.parse(Jsoup.parse(data[i]).text(),GDEXFormatter));
+				td.setStatus(Jsoup.parse(data[i+1]).text());
+				td.setLocation(Jsoup.parse(data[i+2]).text());
+				td.setSource("GDEX");
+				if (!dexi.infoList.contains(td)) dexi.infoList.add(td);
+			}
+		} else throw new NoTrackingException("");
+	}
 }

@@ -31,7 +31,7 @@ public class MainUI extends Application {
 	@Override
 	public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("DEX-I & ABX Tracking");
+        this.primaryStage.setTitle(dexi.APP_NAME+" - "+dexi.TrackingNumber);
 
         try {
             // Load root layout from fxml file.
@@ -58,10 +58,10 @@ public class MainUI extends Application {
         }
 	}
     
-	public static void updateStatus (String s) {
+	public static void updateStatusx (String s) {
 		Platform.runLater(new Runnable() {
 			public void run () {
-				current.ctrl.status.setText(s);
+				//current.ctrl.status.setText(s);
 			}
 		});
 	}
@@ -98,6 +98,32 @@ public class MainUI extends Application {
 				((TableColumn<TrackingData,String>)(current.ctrl.table.getColumns().get(2))).setCellValueFactory(new PropertyValueFactory<TrackingData,String>("status"));
 				((TableColumn<TrackingData,String>)(current.ctrl.table.getColumns().get(3))).setCellValueFactory(new PropertyValueFactory<TrackingData,String>("source"));
 				current.ctrl.table.setItems(data);
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static  void updateQueryTable() {
+		Platform.runLater(new Runnable() {
+			public void run () {
+				ObservableList<QueryData> data=FXCollections.observableArrayList(dexi.queryList);
+				((TableColumn<QueryData,LocalDateTime>)(current.ctrl.queryTable.getColumns().get(0))).setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<LocalDateTime>() {
+
+					@Override
+					public LocalDateTime fromString(String arg0) {
+						return LocalDateTime.parse(arg0,QueryData.DateFormatter);
+					}
+
+					@Override
+					public String toString(LocalDateTime arg0) {
+						return QueryData.DateFormatter.format(arg0);
+					}
+					
+				}));
+				((TableColumn<QueryData,LocalDateTime>)(current.ctrl.queryTable.getColumns().get(0))).setCellValueFactory(new PropertyValueFactory<QueryData,LocalDateTime>("updateTime"));
+				((TableColumn<QueryData,String>)(current.ctrl.queryTable.getColumns().get(1))).setCellValueFactory(new PropertyValueFactory<QueryData,String>("name"));
+				((TableColumn<QueryData,String>)(current.ctrl.queryTable.getColumns().get(2))).setCellValueFactory(new PropertyValueFactory<QueryData,String>("status"));
+				current.ctrl.queryTable.setItems(data);
 			}
 		});
 	}

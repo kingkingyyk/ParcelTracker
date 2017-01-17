@@ -1,10 +1,9 @@
 package dexi;
 
 import java.awt.Toolkit;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -13,12 +12,15 @@ import dexi.InfoFetcher.NoTrackingException;
 
 public class dexi {
 	
-	private static SimpleDateFormat formatter=new SimpleDateFormat("dd/MM/YYYY hh:mm aaa");
+	public static final String APP_NAME="DEX-I/ABX/GDEX Tracking";
 	public static String TrackingNumber="";
 	public static boolean NotifyFlag=false;
 	public static long FetchCount=0;
 	public static LinkedList<TrackingData> infoList=new LinkedList<>();
-	public static enum SourcePriority{DEXI,ABX};
+	public static LinkedList<QueryData> queryList=new LinkedList<>();
+	public static HashMap<SourcePriority,QueryData> queryDataMap=new HashMap<>();
+	public static HashMap<String,Integer> queryStatusPriority=new HashMap<>();
+	public static enum SourcePriority{DEXI,ABX,GDEX};
 	
 	private static void setupGUI() {
 		try {
@@ -28,9 +30,28 @@ public class dexi {
 		System.setProperty("swing.aatext", "true");
 	}
 	
+	private static void setupQueryData() {
+		LocalDateTime now=LocalDateTime.now();
+		
+		for (SourcePriority p : SourcePriority.values()) {
+			QueryData qd=new QueryData();
+			qd.setName(p.name());
+			qd.setStatus("Updating");
+			qd.setUpdateTime(now);
+			queryList.add(qd);
+			queryDataMap.put(p,qd);
+		}
+		
+		queryStatusPriority.put("OK",0);
+		queryStatusPriority.put("No Record",1);
+		queryStatusPriority.put("Error",2);
+	}
+	
 	public static void main (String [] args) throws Exception {
 		setupGUI();
 		new inputTrackingNo();
+		setupQueryData();
+		
 		if (dexi.TrackingNumber.equals("")) return;
 		Thread mainUIT=new Thread() {
 			public void run () {
@@ -45,22 +66,44 @@ public class dexi {
 					try { Thread.sleep(100); } catch (InterruptedException e) {}
 				}
 				while (true) {
-					MainUI.updateStatus(formatter.format(new Date())+" | Updating...");
+					QueryData qd;
 					
-					String status=formatter.format(new Date())+" | ";
+					//DEX-I==================
+					qd=queryDataMap.get(SourcePriority.DEXI);
+					qd.setUpdateTime(LocalDateTime.now());
+					qd.setStatus("Updating...");
+					
 					try {
 						InfoFetcher.fetchDexiInfo(TrackingNumber);
-						status+="DEX-I - OK";
-					} catch (NoTrackingException e) { status+="DEX-I - No Record";
-					} catch (Exception e) { status+="DEX-I - ERROR"; e.printStackTrace();}
+						qd.setStatus("OK");
+					} catch (NoTrackingException e) { qd.setStatus("No Record");
+					} catch (Exception e) { qd.setStatus("Error"); e.printStackTrace();}
+					qd.setUpdateTime(LocalDateTime.now());
 					
-					status+=" | ";
+					//ABX======================
+					qd=queryDataMap.get(SourcePriority.ABX);
+					qd.setUpdateTime(LocalDateTime.now());
+					qd.setStatus("Updating...");
 					try {
 						InfoFetcher.fetchABXInfo(TrackingNumber);
-						status+="ABX - OK";
-					} catch (NoTrackingException e) { status+="ABX - No Record";
-					} catch (Exception e) { status+="ABX - ERROR"; }
-					MainUI.updateStatus(status);
+						qd.setStatus("OK");
+					} catch (NoTrackingException e) { qd.setStatus("No Record");
+					} catch (Exception e) { qd.setStatus("Error"); e.printStackTrace();}
+					qd.setUpdateTime(LocalDateTime.now());
+					
+					//GDEX====================
+					qd=queryDataMap.get(SourcePriority.GDEX);
+					qd.setUpdateTime(LocalDateTime.now());
+					qd.setStatus("Updating...");
+					try {
+						InfoFetcher.fetchGDEXInfo(TrackingNumber);
+						qd.setStatus("OK");
+					} catch (NoTrackingException e) { qd.setStatus("No Record");
+					} catch (Exception e) { qd.setStatus("Error"); e.printStackTrace();}
+					qd.setUpdateTime(LocalDateTime.now());
+					
+					Collections.sort(queryList);
+					MainUI.updateQueryTable();
 					
 					if (infoList.size()>lastSize) {
 						Collections.sort(infoList);
@@ -71,13 +114,11 @@ public class dexi {
 							
 							TrackingData latest=infoList.get(0);
 							Toolkit.getDefaultToolkit().beep();
-							JOptionPane.showMessageDialog(null, "New Update from "+latest.getSource()+" at "+latest.getLocation()+"!\nStatus : "+latest.getStatus(),"Tracking",JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, "New Update from "+latest.getSource()+" at "+latest.getLocation()+"!\nStatus : "+latest.getStatus(),dexi.APP_NAME,JOptionPane.INFORMATION_MESSAGE);
 						}
 						
 						MainUI.updateTable();
 						try { Thread.sleep(500); } catch (InterruptedException e) {}
-					} else if (infoList.size()==0) {
-						MainUI.updateStatus(":( No record found");
 					}
 					
 					int max=0;
