@@ -12,8 +12,8 @@ import java.time.format.DateTimeFormatter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import dexi.TrackingData;
-import dexi.dexi;
+import ParcelTracker.TrackingData;
+import ParcelTracker.ParcelTracker;
 
 public class GDEXFetcher extends InfoFetcher {
 	private static DateTimeFormatter GDEXFormatter=DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -60,7 +60,7 @@ public class GDEXFetcher extends InfoFetcher {
 				td.setStatus(Jsoup.parse(data[i+1]).text());
 				td.setLocation(Jsoup.parse(data[i+2]).text());
 				td.setSource(getType());
-				if (!dexi.infoList.contains(td)) dexi.infoList.add(td);
+				if (!ParcelTracker.infoList.contains(td)) ParcelTracker.infoList.add(td);
 			}
 		} else throw new NoTrackingException("");
 	}

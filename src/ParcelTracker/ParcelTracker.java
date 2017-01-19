@@ -1,4 +1,4 @@
-package dexi;
+package ParcelTracker;
 
 import java.awt.Toolkit;
 import java.time.LocalDateTime;
@@ -14,10 +14,11 @@ import InfoFetcher.DEXIFetcher;
 import InfoFetcher.GDEXFetcher;
 import InfoFetcher.InfoFetcher;
 import InfoFetcher.InfoFetcher.NoTrackingException;
+import InfoFetcher.PosLajuFetcher;
 
-public class dexi {
+public class ParcelTracker {
 	
-	public static final String APP_NAME="Parcel Tracking";
+	public static final String APP_NAME="Parcel Tracker";
 	public static boolean NotifyFlag=false;
 	public static long FetchCount=0;
 	public static LinkedList<TrackingData> infoList=new LinkedList<>();
@@ -40,6 +41,7 @@ public class dexi {
 		allProviders.add(new DEXIFetcher(""));
 		allProviders.add(new ABXFetcher(""));
 		allProviders.add(new GDEXFetcher(""));
+		allProviders.add(new PosLajuFetcher(""));
 	}
 	
 	private static void setupQueryData(String tn) {
@@ -110,7 +112,7 @@ public class dexi {
 							
 							TrackingData latest=infoList.get(0);
 							Toolkit.getDefaultToolkit().beep();
-							JOptionPane.showMessageDialog(null, "New update from "+latest.getSource()+" at "+latest.getLocation()+"!\n<html><b>"+latest.getStatus()+"</b></html>",dexi.APP_NAME,JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, "New update from "+latest.getSource()+" at "+latest.getLocation()+"!\n<html><b>"+latest.getStatus()+"</b></html>",ParcelTracker.APP_NAME,JOptionPane.INFORMATION_MESSAGE);
 						}
 						
 						MainUI.updateTable();

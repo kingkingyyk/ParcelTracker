@@ -1,4 +1,4 @@
-package dexi;
+package ParcelTracker;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ public class DialogInputTrackingNum extends Application {
 	@Override
 	public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle(dexi.APP_NAME);
+        this.primaryStage.setTitle(ParcelTracker.APP_NAME);
 
         try {
             // Load root layout from fxml file.

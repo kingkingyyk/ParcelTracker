@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import dexi.TrackingData;
-import dexi.dexi;
+import ParcelTracker.TrackingData;
+import ParcelTracker.ParcelTracker;
 
 public class DEXIFetcher extends InfoFetcher {
 	private static DateTimeFormatter DEXIFormatter=DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm");
@@ -48,7 +48,7 @@ public class DEXIFetcher extends InfoFetcher {
 				td.setSource(getType());
 				currIndex+=4;
 				
-				if (!dexi.infoList.contains(td)) dexi.infoList.add(td);
+				if (!ParcelTracker.infoList.contains(td)) ParcelTracker.infoList.add(td);
 			}
 		} else throw new NoTrackingException("");
 	}

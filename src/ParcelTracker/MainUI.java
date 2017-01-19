@@ -1,4 +1,4 @@
-package dexi;
+package ParcelTracker;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ public class MainUI extends Application {
 	@Override
 	public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle(dexi.APP_NAME+" - "+dexi.selectedProviders.get(0).getTrackingNumber());
+        this.primaryStage.setTitle(ParcelTracker.APP_NAME+" - "+ParcelTracker.selectedProviders.get(0).getTrackingNumber());
 
         try {
             // Load root layout from fxml file.
@@ -79,7 +79,7 @@ public class MainUI extends Application {
 	public static  void updateTable() {
 		Platform.runLater(new Runnable() {
 			public void run () {
-				ObservableList<TrackingData> data=FXCollections.observableArrayList(dexi.infoList);
+				ObservableList<TrackingData> data=FXCollections.observableArrayList(ParcelTracker.infoList);
 				((TableColumn<TrackingData,LocalDateTime>)(current.ctrl.table.getColumns().get(0))).setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<LocalDateTime>() {
 
 					@Override
@@ -106,7 +106,7 @@ public class MainUI extends Application {
 	public static  void updateQueryTable() {
 		Platform.runLater(new Runnable() {
 			public void run () {
-				ObservableList<QueryData> data=FXCollections.observableArrayList(dexi.queryList);
+				ObservableList<QueryData> data=FXCollections.observableArrayList(ParcelTracker.queryList);
 				((TableColumn<QueryData,LocalDateTime>)(current.ctrl.queryTable.getColumns().get(0))).setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<LocalDateTime>() {
 
 					@Override

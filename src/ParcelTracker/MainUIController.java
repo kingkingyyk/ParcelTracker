@@ -1,4 +1,4 @@
-package dexi;
+package ParcelTracker;
 
 import java.awt.Desktop;
 import java.awt.Toolkit;
@@ -29,7 +29,7 @@ public class MainUIController implements Initializable {
 		copytn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clpbrd.setContents(new StringSelection(dexi.selectedProviders.get(0).getTrackingNumber()), null);
+				clpbrd.setContents(new StringSelection(ParcelTracker.selectedProviders.get(0).getTrackingNumber()), null);
 			}
 		});
 		

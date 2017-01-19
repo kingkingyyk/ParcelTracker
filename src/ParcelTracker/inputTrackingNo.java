@@ -1,4 +1,4 @@
-package dexi;
+package ParcelTracker;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -28,7 +28,7 @@ public class inputTrackingNo extends JDialog {
 	
 	public inputTrackingNo() {
 		setModal(true);
-		setTitle(dexi.APP_NAME);
+		setTitle(ParcelTracker.APP_NAME);
 		setResizable(false);
 		setBounds(100, 100, 450, 295);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -47,9 +47,9 @@ public class inputTrackingNo extends JDialog {
 		btnOK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (textField.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(null, "Please enter a tracking number!",dexi.APP_NAME,JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Please enter a tracking number!",ParcelTracker.APP_NAME,JOptionPane.WARNING_MESSAGE);
 				} else if (getSelectedProviders().size()==0){
-					JOptionPane.showMessageDialog(null, "Please select at least one company!",dexi.APP_NAME,JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Please select at least one company!",ParcelTracker.APP_NAME,JOptionPane.WARNING_MESSAGE);
 				} else {
 					trackingNo=textField.getText();
 					dispose();
@@ -104,21 +104,15 @@ public class inputTrackingNo extends JDialog {
 		setVisible(true);
 	}
 	
-    private static boolean isNumeric (String s) {
-    	for (char c : s.toCharArray()) if (!Character.isDigit(c)) return false;
-    	return true;
-    }
-    
 	private void customInitialize () {
 		try {
 			String clipboardText=(String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor); 
-			if (isNumeric(clipboardText)) textField.setText(clipboardText);
-;
+			textField.setText(clipboardText);
 		} catch (Exception e) {
 			e.printStackTrace();
 		};
 		
-		for (InfoFetcher input : dexi.allProviders) ((DefaultTableModel)table.getModel()).addRow(new Object[] {input,false});
+		for (InfoFetcher input : ParcelTracker.allProviders) ((DefaultTableModel)table.getModel()).addRow(new Object[] {input,false});
 	}
 	
 	public ArrayList<InfoFetcher> getSelectedProviders() {

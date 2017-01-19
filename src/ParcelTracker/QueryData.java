@@ -1,4 +1,4 @@
-package dexi;
+package ParcelTracker;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,7 +36,7 @@ public class QueryData implements Comparable<QueryData> {
 	
 	@Override
 	public int compareTo(QueryData qd) {
-		if (dexi.queryStatusPriority.get(getStatus())!=dexi.queryStatusPriority.get(qd.getStatus())) return -getStatus().compareTo(qd.getStatus());
+		if (ParcelTracker.queryStatusPriority.get(getStatus())!=ParcelTracker.queryStatusPriority.get(qd.getStatus())) return -getStatus().compareTo(qd.getStatus());
 		else if (!getUpdateTime().equals(qd.getUpdateTime())) return -getUpdateTime().compareTo(qd.getUpdateTime());
 		else if (!getName().equals(qd.getName())) return getName().compareTo(qd.getName());
 		return 0;
