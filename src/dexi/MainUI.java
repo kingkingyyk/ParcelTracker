@@ -31,7 +31,7 @@ public class MainUI extends Application {
 	@Override
 	public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle(dexi.APP_NAME+" - "+dexi.TrackingNumber);
+        this.primaryStage.setTitle(dexi.APP_NAME+" - "+dexi.selectedProviders.get(0).getTrackingNumber());
 
         try {
             // Load root layout from fxml file.
@@ -128,7 +128,4 @@ public class MainUI extends Application {
 		});
 	}
 	
-	public static void main(String[] args) {
-		launch(args);
-	}
 }

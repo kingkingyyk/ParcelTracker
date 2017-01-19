@@ -29,7 +29,7 @@ public class MainUIController implements Initializable {
 		copytn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clpbrd.setContents(new StringSelection(dexi.TrackingNumber), null);
+				clpbrd.setContents(new StringSelection(dexi.selectedProviders.get(0).getTrackingNumber()), null);
 			}
 		});
 		

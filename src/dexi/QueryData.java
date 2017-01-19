@@ -38,7 +38,7 @@ public class QueryData implements Comparable<QueryData> {
 	public int compareTo(QueryData qd) {
 		if (dexi.queryStatusPriority.get(getStatus())!=dexi.queryStatusPriority.get(qd.getStatus())) return -getStatus().compareTo(qd.getStatus());
 		else if (!getUpdateTime().equals(qd.getUpdateTime())) return -getUpdateTime().compareTo(qd.getUpdateTime());
-		else if (!getName().equals(qd.getName())) return -dexi.SourcePriority.valueOf(getName()).ordinal()-dexi.SourcePriority.valueOf(qd.getName()).ordinal();
+		else if (!getName().equals(qd.getName())) return getName().compareTo(qd.getName());
 		return 0;
 	}
 }

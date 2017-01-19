@@ -46,7 +46,7 @@ public class TrackingData implements Comparable<TrackingData> {
 	@Override
 	public int compareTo(TrackingData td) {
 		if (!getEventTime().equals(td.getEventTime())) return -getEventTime().compareTo(td.getEventTime());
-		else if (!getSource().equals(td.getSource())) return -dexi.SourcePriority.valueOf(getSource()).ordinal()-dexi.SourcePriority.valueOf(td.getSource()).ordinal();
+		else if (!getSource().equals(td.getSource())) return -getSource().compareTo(td.getSource());
 		return 0;
 	}
 	
