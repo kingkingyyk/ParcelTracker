@@ -3,6 +3,7 @@ package ParcelTracker;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -13,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -32,7 +34,8 @@ public class MainUI extends Application {
 	public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(ParcelTracker.APP_NAME+" - "+ParcelTracker.selectedProviders.get(0).getTrackingNumber());
-
+        this.primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
+        
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();

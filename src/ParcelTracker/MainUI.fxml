@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.Glow?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
@@ -21,7 +22,10 @@
             <Pane layoutY="-6.0" prefHeight="41.0" prefWidth="544.0">
                <children>
                   <Button fx:id="copytn" layoutX="403.0" layoutY="14.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="127.0" text="Copy Tracking No." />
-                  <Hyperlink fx:id="repositoryLink" layoutX="163.0" layoutY="16.0" text="GitHub" />
+                  <Hyperlink fx:id="repositoryLink" layoutX="163.0" layoutY="16.0" text="GitHub">
+                     <effect>
+                        <Glow level="0.75" />
+                     </effect></Hyperlink>
                   <Label layoutX="14.0" layoutY="19.0" text="Latest version available on" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="12.0" />

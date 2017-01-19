@@ -4,6 +4,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -15,7 +16,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
-
 import InfoFetcher.InfoFetcher;
 
 import javax.swing.ListSelectionModel;
@@ -28,6 +28,7 @@ public class inputTrackingNo extends JDialog {
 	
 	public inputTrackingNo() {
 		setModal(true);
+		setIconImage(Utility.resizeImageIcon(new ImageIcon(getClass().getResource("/icon.png")),16,16).getImage());
 		setTitle(ParcelTracker.APP_NAME);
 		setResizable(false);
 		setBounds(100, 100, 450, 295);
